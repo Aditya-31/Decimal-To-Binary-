@@ -1,0 +1,95 @@
+/*const int ledZero = 0; // the 2^0=1 is displayed to Pin 0 of the Arduino
+const int ledOne = 1; // the 2^1=2 is displayed to Pin 1 of the Arduino
+const int ledTwo = 2; // the 2^2=4 is displayed to Pin 2 of the Arduino
+const int ledThree = 3; // the 2^3=8 is displayed to Pin 3 of the Arduino
+const int ledFour = 4; // the 2^4=16 is displayed to Pin 0 of the Arduino
+const int ledFive = 5; // the 2^5=32 is displayed to Pin 0 of the Arduino
+const int ledSix = 6; // the 2^6=64 is displayed to Pin 0 of the Arduino
+const int ledSeven = 7; // the 2^7=128 is displayed to Pin 0 of the Arduino
+const int ledSeven = 8;// the 2^8=256 is displayed to Pin 0 of the Arduino*/
+
+const byte ledPin[]={2,3,4,5,6,7,8,9,10};//Array of LEDs
+const byte signLed=11;//1 gives indication of Negative value
+const byte overFlowLed=13;//to indicate overflow of limit of 8 bits//13 BCOZ of Board's Inbuilt LED
+
+int input;//IF POSSIBLE CONVERT EVERYTHING INTO BYTE EXCEPT INPUT!!!!(AS INPUT IF TAken IN BYtE THeN IT WILL BE LIMITED TO 0-255 Only)
+          //WE CAN USE THE SAME CIRCUIT FOR CONVERTING THE NEGAVTIVE NO.S inTO THEIR BINARY EQUIVALENT AS WELL!!!
+/*WE CAN USE THE SAME CODE BY CHANNGING 2 STATEMENTS FOR OTHER SYSTEM AS WELL*/
+ 
+byte noOfMaxBits=sizeof(ledPin);//2 because the array size is sizeof(int)*9(no of pins in the array)
+
+void setup() {
+  Serial.begin(9600);
+  // set up all the LEDs as OUTPUT
+  for (byte i = 0; i < noOfMaxBits; i++) 
+  {
+      pinMode(ledPin[i], OUTPUT);
+      digitalWrite(ledPin[i],LOW);
+  }
+  //SignPin
+  pinMode(signLed,OUTPUT);
+  digitalWrite(signLed,LOW);
+  //OVERFLOW
+  pinMode(overFlowLed,OUTPUT);
+  digitalWrite(overFlowLed,LOW);
+   
+}
+
+void loop() {
+  /*Serial.println(noOfMaxBits);
+  Serial.println(sizeof(ledPin));
+  Serial.print(sizeof(byte));*/
+  byte ctr=0;
+  Serial.print("\n\nEnter Decimal Input: ");
+  //Serial.print(noOfPins);
+ 
+  while (!Serial.available());{}
+  Serial.println(" ");
+ // Serial.setTimeout(10000);
+  input=Serial.parseInt();
+  
+  Serial.println(" ");
+  Serial.print("The Binary equivalent of");
+  Serial.print(input);
+  Serial.println("is: \t");
+
+  if(input<0)
+  {
+    ctr++;
+    digitalWrite(signLed,HIGH);
+    Serial.println("NEGATIVE NO!!");
+  }
+
+  if(abs(input)<=256)
+  {
+    for(byte i=noOfMaxBits-1;i>=0;i--)
+    {
+        digitalWrite(ledPin[i],LOW);
+        if(abs(input) & round(pow(2,i)))
+        /*
+           ** By changing the 2 in the "pow" function
+          * you change the base of the system
+        */
+        
+        {
+          ctr++;
+          digitalWrite(ledPin[i],HIGH);
+          //Serial.print(round(pow(2,i)));
+          Serial.print("The LED no ");
+          Serial.print(i);
+          Serial.println(" is on!!");
+        }
+    }
+  }  
+  else
+ { 
+  ctr++;
+  digitalWrite(overFlowLed,HIGH);
+  Serial.println("OVERFLOW");
+ }   
+  
+  Serial.print("\n\nNo of LEDs On: ");
+  Serial.println(ctr);
+  delay(3000);
+    
+}
