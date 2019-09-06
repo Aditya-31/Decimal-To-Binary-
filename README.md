@@ -1,2 +1,2 @@
-# Decimal-To-Binary-
+# Decimal-To-Binary-Conversion
 Done Using Arduino
